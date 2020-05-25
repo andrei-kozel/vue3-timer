@@ -1,38 +1,22 @@
 <template>
   <div class="text-center">
-    <h1 class="text-2xl">Don’t use a smoke alarm as a reminder.</h1>
-    <h1 class="mb-8 text-2xl">Use this one!</h1>
-    <div class="flex flex row text-gray-700">
-      <section class="flex flex-col items-center container">
-        <span
-          class="flex justify-center items-center text-6xl leading-none container-numbers bg-white bg-opacity-50 rounded-lg"
-        >{{ state.days }}</span>
-        <p class="tracking-wider font-hairline mt-1">days</p>
-      </section>
+    <Title />
+    <div class="flex flex row text-gray-700" v-if="!state.finished">
+      <TimerCard :time="state.days" name="days" :isLoaded="state.loaded" />
       <section class="text-4xl leading-relaxed mx-3">:</section>
 
-      <section class="flex flex-col items-center container">
-        <span
-          class="flex justify-center items-center text-6xl leading-none container-numbers bg-white bg-opacity-50 rounded-lg"
-        >{{ state.hours }}</span>
-        <p class="tracking-wider font-hairline mt-1">hours</p>
-      </section>
+      <TimerCard :time="state.hours" name="hours" :isLoaded="state.loaded" />
       <section class="text-4xl leading-relaxed mx-3">:</section>
 
-      <section class="flex flex-col items-center container">
-        <span
-          class="flex justify-center items-center text-6xl leading-none container-numbers bg-white bg-opacity-50 rounded-lg"
-        >{{ state.minutes }}</span>
-        <p class="tracking-wider font-hairline mt-1">minutes</p>
-      </section>
+      <TimerCard :time="state.minutes" name="minutes" :isLoaded="state.loaded" />
       <section class="text-4xl leading-relaxed mx-3">:</section>
-      <section class="flex flex-col items-center container">
-        <span
-          class="flex justify-center items-center text-6xl leading-none container-numbers bg-white bg-opacity-50 rounded-lg"
-        >{{ state.seconds }}</span>
-        <p class="tracking-wider font-hairline mt-1">seconds</p>
-      </section>
+
+      <TimerCard :time="state.seconds" name="seconds" :isLoaded="state.loaded" />
     </div>
+    <div v-else>
+      <h1 class="text-3xl text-purple-600">Time waits for no one.</h1>
+    </div>
+
     <button
       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-8"
       @click="$emit('setStatus', false)"
@@ -44,18 +28,28 @@
 
 <script>
 /* eslint-disable no-unused-vars */
-import { ref, reactive, computed, onMounted, emit } from "vue";
+import { reactive, computed, onMounted, emit } from "vue";
+import TimerCard from "./BaseUI/BaseTimerCard";
+import Title from "./BaseUI/BaseTitle";
+
 export default {
   props: {
     propState: Object
+  },
+  components: {
+    TimerCard,
+    Title
   },
   setup(props) {
     const state = reactive({
       days: 0,
       hours: 0,
       minutes: 0,
-      seconds: 0
+      seconds: 0,
+      loaded: false,
+      finished: false
     });
+
     const _seconds = 1000;
     const _minutes = computed(() => _seconds * 60);
     const _hours = computed(() => _minutes.value * 60);
@@ -74,13 +68,14 @@ export default {
 
     const formatTime = num => (num < 10 ? "0" + num : num);
 
-    function setCoundDown() {
+    const setCoundDown = () => {
       const timer = setInterval(() => {
         const now = new Date();
         const distance = end.value.getTime() - now.getTime();
 
         if (distance < 0) {
           clearInterval(timer);
+          state.finished = true;
           return;
         }
 
@@ -93,8 +88,9 @@ export default {
         state.hours = formatTime(hours);
         state.minutes = formatTime(minutes);
         state.seconds = formatTime(seconds);
+        state.loaded = true;
       }, 1000);
-    }
+    };
 
     onMounted(() => {
       setCoundDown();
@@ -105,13 +101,3 @@ export default {
 };
 /* eslint-enable no-unused-vars */
 </script>
-
-<style lang="scss">
-.container {
-  &-numbers {
-    width: 90px;
-    height: 70px;
-    text-align: center;
-  }
-}
-</style>
