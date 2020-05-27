@@ -1,5 +1,8 @@
 <template>
-  <div id="app" class="h-screen bg-green-200 flex flex-col justify-center items-center h-full">
+  <div
+    id="app"
+    class="h-screen bg-green-200 flex flex-col justify-center items-center h-full"
+  >
     <Timer v-if="isTimerSet" :propState="state" @setStatus="setStatus" />
     <InputTimer v-else @setState="setState" />
   </div>

@@ -8,10 +8,18 @@
       <TimerCard :time="state.hours" name="hours" :isLoaded="state.loaded" />
       <section class="text-4xl leading-relaxed mx-3">:</section>
 
-      <TimerCard :time="state.minutes" name="minutes" :isLoaded="state.loaded" />
+      <TimerCard
+        :time="state.minutes"
+        name="minutes"
+        :isLoaded="state.loaded"
+      />
       <section class="text-4xl leading-relaxed mx-3">:</section>
 
-      <TimerCard :time="state.seconds" name="seconds" :isLoaded="state.loaded" />
+      <TimerCard
+        :time="state.seconds"
+        name="seconds"
+        :isLoaded="state.loaded"
+      />
     </div>
     <div v-else>
       <h1 class="text-3xl text-purple-600">Time waits for no one.</h1>

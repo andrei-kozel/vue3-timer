@@ -13,18 +13,26 @@
 
       <BaseInput name="seconds" @updateState="updateState" />
     </div>
-    {{ state.showError }}
-    <div v-if="state.errors > 0">Error</div>
+    <div
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-4 rounded "
+      v-if="error"
+    >
+      <strong class="font-bold">Holy smokes! </strong>
+      <span class="block sm:inline">Only positive numbers my friend!</span>
+      <span class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+    </div>
     <button
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-8"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
       @click="setState"
-    >Start timer</button>
+    >
+      Start timer
+    </button>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
-import { reactive, computed, onMounted, emit } from "vue";
+import { ref, reactive, computed, onMounted, emit } from "vue";
 import Title from "./BaseUI/BaseTitle";
 import BaseInput from "./BaseUI/BaseInput";
 export default {
@@ -37,13 +45,20 @@ export default {
       days: "",
       hours: "",
       minutes: "",
-      seconds: "",
-      errors: 0
+      seconds: ""
     });
+    let error = ref(false);
     const setTimerToTrue = true;
     const setState = () => {
       checkStateIsAnyEmpty(state);
-      emit("setState", { state, setTimerToTrue });
+      for (let key in state) {
+        if (parseInt(state[key]) && parseInt(state[key]) >= 0) {
+          error.value = false;
+          emit("setState", { state, setTimerToTrue });
+        } else {
+          error.value = true;
+        }
+      }
     };
 
     const checkStateIsAnyEmpty = state => {
@@ -58,7 +73,7 @@ export default {
       state[e.key] = e.value;
     };
 
-    return { state, setState, updateState };
+    return { state, error, setState, updateState };
   }
 };
 /* eslint-enable no-unused-vars */
